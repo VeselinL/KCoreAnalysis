@@ -5,6 +5,9 @@ public class Edge {
     public Edge(String label){
         this.label = label;
     }
+    public Edge(){
+        this.label = "";
+    }
     public String getLabel() {
         return this.label;
     }

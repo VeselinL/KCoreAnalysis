@@ -1,7 +1,7 @@
 package graph;
 
 public class Node {
-    private  int id;
+    private  final int id;
     public Node(int id){
         this.id = id;
     }
