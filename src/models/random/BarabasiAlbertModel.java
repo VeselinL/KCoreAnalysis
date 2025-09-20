@@ -7,19 +7,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static utils.GraphUtils.avgDegree;
+
 public class BarabasiAlbertModel {
     private final UndirectedSparseGraph<Node,Edge> graph;
     final static int MAX_ATTEMPTS = 10000;
-    List<Node> degrees;
+    List<Node> degrees = new ArrayList<>();
+    private double p;
+    private int N, m0, m ;
     public BarabasiAlbertModel(int N,int m0,int m, double p){
         if(m > m0 || m < 1){
             throw new IllegalArgumentException("Number of new edges(m) must be >=1 and <= number of initial nodes(m0)!");
+        }else if(m0 > N){
+            throw new IllegalArgumentException("Number of initial nodes can't be higher than number of total nodes!");
         }
-        degrees = new ArrayList<>();
+        this.p = p;
+        this.m0 = m0;
+        this.N = N;
+        this.m = m;
         graph = new ErdosRenyiModel(m0, p).getGraph();
         initDegrees();
         Random random = new Random();
-        for(int i = m0+1;i<=N;i++){
+        for(int i = m0;i < N;i++){
             Node newNode = new Node(i);
             graph.addVertex(newNode);
             int edgesAdded = 0, attempts = 0;
@@ -54,5 +63,15 @@ public class BarabasiAlbertModel {
     }
     public UndirectedSparseGraph<Node,Edge> getGraph(){
         return this.graph;
+    }
+    public void compareAvgDegree(){
+        double initialEdges = p * m0 * (m0 - 1) / 2.0;
+        double growthEdges = m * (N - m0);
+        double expected = (2 * (initialEdges + growthEdges)) / N;
+        double actual = avgDegree(graph);
+        System.out.printf(
+                "Expected average degree is %.3f, actual one is %.3f.%n",
+                expected, actual
+        );
     }
 }

@@ -1,4 +1,4 @@
-package algorithms.a;
+package algorithms.abs;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import graph.Edge;
@@ -10,10 +10,11 @@ import java.util.Set;
 
 public abstract class KCoreDecomposition {
     protected final UndirectedSparseGraph<Node, Edge> graph;
-    protected HashMap<Node, Integer> shellIndices;
+    protected HashMap<Node, Integer> shellIndices = new HashMap<>();
     public KCoreDecomposition(UndirectedSparseGraph<Node,Edge> graph){
         this.graph = graph;
-        shellIndices = new HashMap<>();
+    }
+    public void run(){
         computeKCores();
     }
     protected abstract void computeKCores();

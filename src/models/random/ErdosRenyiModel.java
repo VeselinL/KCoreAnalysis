@@ -8,24 +8,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import static utils.GraphUtils.avgDegree;
+
 public class ErdosRenyiModel {
     private UndirectedSparseGraph<Node, Edge> graph;
-    private HashMap<Integer, Node> nodes;
+    private ArrayList<Node> nodes;
     private double p;
     private int n;
     public ErdosRenyiModel(int nodeCount, double prob){
+        if(nodeCount < 0){
+            throw new IllegalArgumentException("Node count can't be less than 0!");
+        }
+        if(nodeCount == 0) {
+            System.out.println("WARNING: Creating an empty graph..");
+        }
+        if(prob > 1){
+            prob = 1;
+        }else if(prob < 0){
+            throw new IllegalArgumentException("Probability must be in [0,1] !");
+        }
         this.n = nodeCount;
         this.p = prob;
         graph = new UndirectedSparseGraph<>();
-        nodes = new HashMap<>();
-        for(int i = 1;i<=n;i++){
+        nodes = new ArrayList<>();
+        for(int i = 0;i<n;i++){
             Node current = new Node(i);
-            nodes.put(i, current);
+            nodes.add(current);
             graph.addVertex(current);
         }
         Random random = new Random();
-        for(int i = 1;i<n;i++){
-            for(int j = i+1;j<=n;j++){
+        for(int i = 0;i<n;i++){
+            for(int j = i+1;j<n;j++){
                 if(random.nextDouble() <= p){
                     graph.addEdge(new Edge(),nodes.get(i),nodes.get(j));
                 }
@@ -37,14 +50,10 @@ public class ErdosRenyiModel {
     }
     public void compareAvgDegree(){
         double expected = p * (n-1);
-        double actual = avgDegree();
-        System.out.println("Expected avg degree is "+ expected+", actual one is "+actual+".");
-    }
-    public double avgDegree(){
-        double sum = 0;
-        for(Node node:graph.getVertices()){
-            sum += graph.degree(node);
+        double actual = avgDegree(graph);
+        if(n == 0){
+            expected = 0;
         }
-        return sum / graph.getVertexCount();
+        System.out.printf("Expected average degree is %.3f, actual one is %.3f.%n", expected, actual);
     }
 }

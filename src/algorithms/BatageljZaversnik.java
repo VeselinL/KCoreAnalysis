@@ -1,30 +1,40 @@
 package algorithms;
 
-import algorithms.a.KCoreDecomposition;
+import algorithms.abs.KCoreDecomposition;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import graph.*;
 import java.util.*;
 
 public class BatageljZaversnik extends KCoreDecomposition {
-    private HashMap<Integer, HashSet<Node>> kcoreBuckets;
+    private HashMap<Integer, LinkedHashSet<Node>> kcoreBuckets;
 
     public BatageljZaversnik(UndirectedSparseGraph<Node,Edge> graph){
+        this(graph,true);
+    }
+    /**
+     * Creates the Batagelj–Zaversnik instance.
+     * @param autoRun if true, the algorithm is executed immediately
+     */
+    public BatageljZaversnik(UndirectedSparseGraph<Node,Edge> graph, boolean autoRun){
         super(graph);
+        if(autoRun){
+            run();
+        }
     }
     @Override
     protected void computeKCores(){
         int maxDegree = getMaxDegree();
         HashMap<Node, Integer> nodeDegrees = initializeBuckets(maxDegree);
-        for (int i = 0; i <= maxDegree; i++) {
-            HashSet<Node> currentBucket = kcoreBuckets.get(i);
+        for (int k = 0; k <= maxDegree; k++) {
+            LinkedHashSet<Node> currentBucket = kcoreBuckets.get(k);
             while (!currentBucket.isEmpty()) {
                 Iterator<Node> it = currentBucket.iterator();
                 Node currentNode = it.next();
                 it.remove();
-                shellIndices.put(currentNode, i);
+                shellIndices.put(currentNode, k);
                 for (Node neighbor : graph.getNeighbors(currentNode)) {
                     int neighborDegree = nodeDegrees.get(neighbor);
-                    if (neighborDegree > i) {
+                    if (neighborDegree > k) {
                         kcoreBuckets.get(neighborDegree).remove(neighbor);
                         kcoreBuckets.get(neighborDegree - 1).add(neighbor);
                         nodeDegrees.put(neighbor, neighborDegree - 1);
@@ -42,6 +52,25 @@ public class BatageljZaversnik extends KCoreDecomposition {
         }
         return maxDegree;
     }
+    private HashMap<Node, Integer> initializeBuckets(int maxDegree){
+        kcoreBuckets = new HashMap<>();
+        HashMap<Node, Integer> nodeDegrees = new HashMap<>();
+        for (int i = 0; i <= maxDegree; i++) {
+            kcoreBuckets.put(i, new LinkedHashSet<>());
+        }
+        try {
+            for (Node node : graph.getVertices()) {
+                nodeDegrees.put(node, graph.degree(node));
+                LinkedHashSet<Node> kcore = kcoreBuckets.get(graph.degree(node));
+                kcore.add(node);
+            }
+        }catch (OutOfMemoryError e){
+            throw new IllegalStateException("Too many nodes to initialize(nodes="+graph.getVertexCount()+")." +
+                    " Lower node count or increase JVM heap with -Xmx");
+        }
+        return nodeDegrees;
+    }
+
     public UndirectedSparseGraph<Node,Edge> getKcoreNetwork(int k){
         Set<Node> nodes = super.getKcoreNodes(k);
         UndirectedSparseGraph<Node, Edge> kcoreNetwork = new UndirectedSparseGraph<>();
@@ -55,20 +84,13 @@ public class BatageljZaversnik extends KCoreDecomposition {
         }
         return kcoreNetwork;
     }
+
     public int getShellIndex(Node node){
         return shellIndices.getOrDefault(node, -1);
     }
-    private HashMap<Node, Integer> initializeBuckets(int maxDegree){
-        kcoreBuckets = new HashMap<>();
-        HashMap<Node, Integer> nodeDegrees = new HashMap<>();
-        for (int i = 0; i <= maxDegree; i++) {
-            kcoreBuckets.put(i, new HashSet<>());
-        }
-        for (Node node : graph.getVertices()) {
-            nodeDegrees.put(node, graph.degree(node));
-            Set<Node> kcore = kcoreBuckets.get(graph.degree(node));
-            kcore.add(node);
-        }
-        return nodeDegrees;
+    public int getKCoreNodeCount(int k){return getKcoreNodes(k).size(); }
+    public int maxShellIndex(){
+        return Collections.max(shellIndices.values());
     }
+
 }
