@@ -7,6 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="apache-commons-math-3-3_6_1" level="project" />
     <orderEntry type="library" exported="" name="jung2-2_0_1" level="project" />
+    <orderEntry type="library" exported="" name="xchart-3.8" level="project" />
   </component>
 </module>

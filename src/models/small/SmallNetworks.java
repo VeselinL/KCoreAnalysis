@@ -1,4 +1,4 @@
-package models;
+package models.small;
 
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import graph.Edge;

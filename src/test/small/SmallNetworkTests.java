@@ -1,13 +1,12 @@
-package test;
+package test.small;
 import algorithms.BatageljZaversnik;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import edu.uci.ics.jung.graph.util.Pair;
 import graph.Node;
 import graph.Edge;
-import models.SmallNetworks;
+import models.small.SmallNetworks;
 import java.util.Set;
-import java.util.stream.Collectors;
-import static utils.AnalysisUtils.drawGraph;
+import static utils.GraphUtils.edgesToString;
+import static utils.VisualizationUtils.drawNetwork;
 
 public class SmallNetworkTests {
     public static void main(String[]args){
@@ -18,7 +17,7 @@ public class SmallNetworkTests {
     public static void testSmallNetwork(UndirectedSparseGraph<Node,Edge> graph, String nameOfGraph){
         System.out.println("\n"+nameOfGraph.toUpperCase()+":");
         BatageljZaversnik bz = new BatageljZaversnik(graph);
-        drawGraph(graph, nameOfGraph);
+        drawNetwork(graph, nameOfGraph);
         for(int k = 0;k <= bz.maxShellIndex();k++){
             System.out.println("\n"+k+"-CORE:");
             Set<Node> kCoreNodes = bz.getKcoreNodes(k);
@@ -28,23 +27,9 @@ public class SmallNetworkTests {
             System.out.println("Nodes in "+k+"-core:");
             System.out.println(kCoreNodes);
             System.out.println("Edges in "+k+"-core:");
-            printEdges(kCore);
-            drawGraph(kCore, nameOfGraph+"'s "+k+"-core subgraph");
+            System.out.println(edgesToString(kCore));
+            drawNetwork(kCore, nameOfGraph+"'s "+k+"-core subgraph");
         }
-    }
-    public static void printEdges(UndirectedSparseGraph<Node,Edge> graph){
-        String edgesString = graph.getEdges().stream()
-                .map(edge -> {
-                    Pair<Node> link = graph.getEndpoints(edge);
-                    if(link != null) {
-                        return link.getFirst() + "-" + link.getSecond();
-                    } else {
-                        return "";
-                    }
-                })
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.joining(", "));
-        System.out.println(edgesString);
     }
 }
 

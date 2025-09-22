@@ -1,13 +1,13 @@
 package utils;
 
-import algorithms.BatageljZaversnik;
-import algorithms.StraightForward;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
 import graph.Edge;
 import graph.Node;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class GraphUtils {
     public static double avgDegree(UndirectedSparseGraph<Node,Edge> graph){
@@ -44,43 +44,24 @@ public class GraphUtils {
         }
         return graphCopy;
     }
-    public static void compareBatageljZaversnikAndStraightForwardAlgo(UndirectedSparseGraph<Node,Edge> graph){
-        if(graph.getVertexCount() == 0){
-            System.out.println("The supplied graph is empty, continuing with the next one...");
-            return;
+    public static String edgesToString(UndirectedSparseGraph<Node,Edge> graph){
+        return graph.getEdges().stream()
+                .map(edge -> {
+                    Pair<Node> link = graph.getEndpoints(edge);
+                    if(link != null) {
+                        return link.getFirst() + "-" + link.getSecond();
+                    } else {
+                        return "";
+                    }
+                })
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.joining(", "));
+    }
+    public static HashMap<Node,Integer> nodeDegrees(UndirectedSparseGraph<Node,Edge> graph){
+        HashMap<Node, Integer> degrees = new HashMap<>();
+        for(Node node: graph.getVertices()){
+            degrees.put(node, graph.degree(node));
         }
-        BatageljZaversnik bz = new BatageljZaversnik(graph, false);
-        long start = System.nanoTime();
-        bz.run();
-        long duration = System.nanoTime() - start;
-        Map<Node,Integer> bzShellIndices = bz.getShellIndices();
-        System.out.println("Batagelj-Zaversnik algorithm took "+(duration / 1_000_000_000.0)+" seconds.");
-        start = System.nanoTime();
-        Map<Node,Integer> sfShellIndices = StraightForward.straightForwardAlgorithm(graph);
-        duration = System.nanoTime() - start;
-        System.out.println("Straight forward algorithm took "+(duration / 1_000_000_000.0)+" seconds.");
-        if(bzShellIndices.isEmpty()){
-            System.out.println("Batagelj-Zaversnik algorithm made an error - map of shell indices is empty.");
-            return;
-        }else if(sfShellIndices.isEmpty()){
-            System.out.println("Straight forward algorithm made an error - map of shell indices is empty.");
-            return;
-        }
-        if(!bzShellIndices.equals(sfShellIndices)){
-            for(Node node: bzShellIndices.keySet()){
-                int bzIndex = bzShellIndices.get(node);
-                int sfIndex = sfShellIndices.get(node);
-                if(bzIndex != sfIndex){
-                    System.out.println("Mismatch of indexes: "+node+
-                            " Batagelj-Zaversnik: "+bzIndex+
-                            " Straight forward: "+sfIndex);
-                }
-            }
-        }else{
-            int maxIndex = bz.maxShellIndex();
-            System.out.println("Max shell index in the graph is "+maxIndex);
-            System.out.println("Number of nodes inside the max core is "+bz.getKcoreNodes(maxIndex).size());
-            System.out.println("Both the Batagelj-Zaversnik and straight forward algorithm produced identical shell indices.");
-        }
+        return degrees;
     }
 }

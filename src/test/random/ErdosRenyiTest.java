@@ -3,8 +3,7 @@ package test.random;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import models.random.ErdosRenyiModel;
 import graph.*;
-
-import static utils.GraphUtils.compareBatageljZaversnikAndStraightForwardAlgo;
+import static test.AlgorithmComparison.*;
 
 public class ErdosRenyiTest {
     public static void main(String[]args){

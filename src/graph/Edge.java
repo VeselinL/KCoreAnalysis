@@ -6,7 +6,7 @@ public class Edge {
         this.label = label;
     }
     public Edge(){
-        this.label = "";
+        this("");
     }
     public String getLabel() {
         return this.label;

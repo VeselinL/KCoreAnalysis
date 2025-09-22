@@ -3,7 +3,8 @@ package test.random;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import static models.random.CorePeripheryModel.*;
 import graph.*;
-import static utils.GraphUtils.*;
+import static test.AlgorithmComparison.*;
+import static utils.GraphUtils.avgDegree;
 
 public class CorePeripheryTest {
     public static void main(String[]args){
