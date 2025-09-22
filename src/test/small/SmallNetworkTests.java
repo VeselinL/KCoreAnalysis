@@ -1,5 +1,6 @@
 package test.small;
 import algorithms.BatageljZaversnik;
+import analysis.network.file.ZacharyKarateClub;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import graph.Node;
 import graph.Edge;
@@ -7,12 +8,14 @@ import models.small.SmallNetworks;
 import java.util.Set;
 import static utils.GraphUtils.edgesToString;
 import static utils.VisualizationUtils.drawNetwork;
+import static readers.GraphFileReader.readUndirectedSparseGraph;
 
 public class SmallNetworkTests {
     public static void main(String[]args){
         testSmallNetwork(SmallNetworks.createGraphFromPresentation(),"Graph from presentation");
         testSmallNetwork(SmallNetworks.createGraphWithTwoCliques(), "Two clique graph");
         testSmallNetwork(SmallNetworks.createGraphWithFourPartitions(),"Four partition graph");
+        testSmallNetwork(new ZacharyKarateClub().getGraph(), "Zachary Karate Club");
     }
     public static void testSmallNetwork(UndirectedSparseGraph<Node,Edge> graph, String nameOfGraph){
         System.out.println("\n"+nameOfGraph.toUpperCase()+":");

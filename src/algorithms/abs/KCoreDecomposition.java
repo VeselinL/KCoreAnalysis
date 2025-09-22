@@ -26,7 +26,7 @@ public abstract class KCoreDecomposition {
     public Set<Node> getKcoreNodes(int k) {
         Set<Node> kcoreNodes = new HashSet<>();
         for(Node node: graph.getVertices()){
-            if (shellIndices.get(node) >= k){
+            if (shellIndices.getOrDefault(node, -1) >= k) {
                 kcoreNodes.add(node);
             }
         }

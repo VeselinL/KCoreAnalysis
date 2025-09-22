@@ -44,11 +44,9 @@ public class BatageljZaversnik extends KCoreDecomposition {
         }
     }
     private int getMaxDegree(){
-        int maxDegree = Integer.MIN_VALUE;
+        int maxDegree = 0;
         for(Node node: graph.getVertices()){
-            if(graph.degree(node) > maxDegree){
-                maxDegree = graph.degree(node);
-            }
+            maxDegree = Math.max(maxDegree, graph.degree(node));
         }
         return maxDegree;
     }
@@ -90,7 +88,6 @@ public class BatageljZaversnik extends KCoreDecomposition {
     }
     public int getKCoreNodeCount(int k){return getKcoreNodes(k).size(); }
     public int maxShellIndex(){
-        return Collections.max(shellIndices.values());
+        return shellIndices.isEmpty() ? 0 : Collections.max(shellIndices.values());
     }
-
 }

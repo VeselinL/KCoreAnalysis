@@ -5,7 +5,6 @@ import graph.Edge;
 import graph.Node;
 import java.util.ArrayList;
 import java.util.List;
-
 public class SmallNetworks {
     public static UndirectedSparseGraph<Node, Edge> createGraphFromPresentation() {
         UndirectedSparseGraph<Node, Edge> graph = new UndirectedSparseGraph<>();

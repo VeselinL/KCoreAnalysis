@@ -24,7 +24,6 @@ public class StraightForward{
                     nodesToRemove.add(node);
                 }
             }
-            // If no vertices are found with degree < k, increment k
             if (nodesToRemove.isEmpty()) {
                 k++;
                 // If k exceeds the maximum possible degree, break the loop
@@ -33,7 +32,6 @@ public class StraightForward{
                 }
                 continue; // Restart the loop with the new, higher k
             }
-            // Assign the current k-core value (k-1) to the removed vertices and remove them
             for (Node node : nodesToRemove) {
                 shellIndices.put(node, k - 1);
                 graphCopy.removeVertex(node);
@@ -41,7 +39,7 @@ public class StraightForward{
             remainingNodes.removeAll(nodesToRemove);
         }
 
-        // Handle any remaining vertices (these belong to the highest k-core)
+        // Handle remaining nodes
         for (Node node : remainingNodes) {
             shellIndices.put(node, k - 1);
         }

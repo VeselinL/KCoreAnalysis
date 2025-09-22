@@ -7,20 +7,28 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class GraphFileWriter {
-    public static void writeUndirectedSparseGraph(UndirectedSparseGraph<Node,Edge> graph,
-                                                  HashMap<Node, Integer> nodes, HashMap<Node, Double> cc,
-                                                  HashMap<Node, Double> bc, HashMap<Node, Double> ec,
-                                                  String file){
+    public static void writeUndirectedSparseGraphMetrics(UndirectedSparseGraph<Node,Edge> graph,
+                                                         HashMap<Node, Integer> shellIndices,
+                                                         HashMap<Node, Double> cc,
+                                                         HashMap<Node, Double> bc,
+                                                         HashMap<Node, Double> ec,
+                                                         String file,
+                                                         boolean fullCentralities){
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(file))){
-            bw.write("node,closeness,betweenness,eigenvector");
+            if(fullCentralities){
+                bw.write("node,degree,shell_index,closeness,betweenness,eigenvector");
+            }else{
+                bw.write("node,degree,shell_index,harmonic_closeness,approx_betweenness,approx_eigenvector");
+            }
             bw.newLine();
             StringBuilder sb = new StringBuilder();
             for(Node node: graph.getVertices()){
                 sb.setLength(0);
-                sb.append(nodes.get(node)).append(",");
+                sb.append(node).append(",")
+                        .append(graph.degree(node)).append(",")
+                        .append(shellIndices.getOrDefault(node, -1)).append(",");;
                 Double ccVal = cc.getOrDefault(node, 0.0);
                 Double bcVal = bc.getOrDefault(node, 0.0);
                 Double ecVal = ec.getOrDefault(node, 0.0);

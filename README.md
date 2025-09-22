@@ -7,18 +7,19 @@ using the JUNG library.
 
 ---
 
-## 🚀 Project Goals
+##  Project Goals
 
-- Implement Batagelj–Zaveršnik algorithm for k-algorithms decomposition (without using existing library implementations) DONE
-- Implement a baseline straightforward algorithm for validation DONE
-- Generate synthetic networks:
-    - **Erdős–Rényi** (random graph) 
-    - **Barabási–Albert** (scale-free network) 
-    - **Core-Periphery model** (manually implemented)
-- Test algorithms on small synthetic networks (15–20 nodes)
-- Perform large-scale tests on synthetic networks (>100 nodes)
-- Analyze real-world social networks (>1k nodes) from publicly available datasets
-- Empirical analysis of k-algorithms structures and correlations with centrality measures:
-    - Degree, closeness, betweenness, eigenvector centrality
-    - Spearman correlation between shell index and centrality measures
-- Graphical visualizations of correlations and k-algorithms structures
+- Implement Batagelj–Zaveršnik algorithm for k-algorithms decomposition (without using existing library implementations) _**DONE**_
+- Implement a baseline straightforward algorithm for validation _**DONE**_
+- Generate synthetic networks: 
+    - **Erdős–Rényi** (random graph) _**DONE**_
+    - **Barabási–Albert** (scale-free network) _**DONE**_
+    - **Core-Periphery model** (manually implemented) _**DONE**_
+- Test algorithms on small synthetic networks (15–20 nodes) _**DONE**_
+- Perform large-scale tests on synthetic networks (>100 nodes) _**DONE**_
+- Analyze real-world social networks (>1k nodes) from publicly available datasets _**DONE**_
+- Empirical analysis of k-algorithms structures and correlations with centrality measures: 
+    - Degree, closeness, betweenness, eigenvector centrality _**DONE**_
+    - Spearman correlation between shell index and centrality measures _**DONE**_
+- Empirical analysis of k-cores in networks _**DONE**_
+- Graphical visualizations of correlations and k-algorithms structures _**DONE**_

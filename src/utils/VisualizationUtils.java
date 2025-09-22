@@ -1,14 +1,10 @@
 package utils;
 
-import algorithms.BatageljZaversnik;
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import graph.Edge;
 import graph.Node;
-import models.random.BarabasiAlbertModel;
-import models.random.ErdosRenyiModel;
-import models.small.SmallNetworks;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import org.knowm.xchart.SwingWrapper;
@@ -19,13 +15,9 @@ import org.knowm.xchart.style.lines.SeriesLines;
 import org.knowm.xchart.style.markers.SeriesMarkers;
 import org.apache.commons.math3.stat.regression.SimpleRegression;
 
-import static utils.GraphUtils.nodeDegrees;
-import static utils.CentralityUtils.*;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class VisualizationUtils {
     public static void drawNetwork(UndirectedSparseGraph<Node, Edge> graph, String title) {
@@ -35,10 +27,7 @@ public class VisualizationUtils {
         BasicVisualizationServer<Node, Edge> vv = new BasicVisualizationServer<>(layout);
         vv.setPreferredSize(new Dimension(650, 650));
 
-        // Customize node labels
         vv.getRenderContext().setVertexLabelTransformer(node -> String.valueOf(node.getId()));
-
-        // Create a JFrame to show the graph
         JFrame frame = new JFrame(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(vv);
