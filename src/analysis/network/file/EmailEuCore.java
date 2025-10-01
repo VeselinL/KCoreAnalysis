@@ -1,8 +1,11 @@
 package analysis.network.file;
 
 import static readers.GraphFileReader.readUndirectedSparseGraph;
+import static utils.GraphUtils.nodeDegrees;
 
 import analysis.abs.Network;
+
+import java.util.Collections;
 
 /**
  * The network was generated using email data from a large European research institution.

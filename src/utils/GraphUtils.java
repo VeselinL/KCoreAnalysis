@@ -1,12 +1,15 @@
 package utils;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
+import edu.uci.ics.jung.algorithms.shortestpath.UnweightedShortestPath;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import edu.uci.ics.jung.graph.util.Pair;
 import graph.Edge;
 import graph.Node;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -84,5 +87,26 @@ public class GraphUtils {
             }
         }
         return diameter;
+    }
+    public static double averagePath(UndirectedSparseGraph<Node, Edge> graph) {
+        if (graph.getVertexCount() == 0) return 0.0;
+
+        UnweightedShortestPath<Node, Edge> usp = new UnweightedShortestPath<>(graph);
+        double totalLength = 0;
+        long totalPairs = 0;
+
+        List<Node> nodes = new ArrayList<>(graph.getVertices());
+        for (int i = 0; i < nodes.size(); i++) {
+            Node u = nodes.get(i);
+            Map<Node, Number> distances = usp.getDistanceMap(u);
+            for (int j = i + 1; j < nodes.size(); j++) {
+                Node v = nodes.get(j);
+                if (distances.containsKey(v)) {
+                    totalLength += distances.get(v).doubleValue();
+                    totalPairs++;
+                }
+            }
+        }
+        return totalLength / totalPairs;
     }
 }

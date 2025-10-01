@@ -7,6 +7,7 @@ import graph.Edge;
 import models.small.SmallNetworks;
 import java.util.Set;
 import static utils.GraphUtils.edgesToString;
+import static utils.GraphUtils.nodeDegrees;
 import static utils.VisualizationUtils.drawNetwork;
 import static readers.GraphFileReader.readUndirectedSparseGraph;
 
@@ -20,6 +21,7 @@ public class SmallNetworkTests {
     public static void testSmallNetwork(UndirectedSparseGraph<Node,Edge> graph, String nameOfGraph){
         System.out.println("\n"+nameOfGraph.toUpperCase()+":");
         BatageljZaversnik bz = new BatageljZaversnik(graph);
+        System.out.println(nodeDegrees(graph));
         drawNetwork(graph, nameOfGraph);
         for(int k = 0;k <= bz.maxShellIndex();k++){
             System.out.println("\n"+k+"-CORE:");

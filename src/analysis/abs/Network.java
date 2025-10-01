@@ -27,6 +27,7 @@ public abstract class Network {
     private static final int CENTRALITY_THRESHOLD = 10_000;
     private static final int PLOT_THRESHOLD = 100_000;
     private static final int SAMPLE_SIZE = 100;
+    private static final int AVERAGE_PATH_THRESHOLD = 500;
     private static final int DIAMETER_THRESHOLD = 1000;
     private static final Scanner IN = new Scanner(System.in);
 
@@ -49,6 +50,7 @@ public abstract class Network {
         double density = (graphDensity(graph)) * 100.0;
         WeakComponentClusterer<Node, Edge> clusterer = new WeakComponentClusterer<>();
         Set<Set<Node>> comps = clusterer.transform(graph);
+        // number of connected comps in graph
         int numComponents = comps.size();
         int largestSize = comps.stream().mapToInt(Set::size).max().orElse(0);
         int N = graph.getVertexCount();
@@ -56,6 +58,7 @@ public abstract class Network {
 
         System.out.printf("[%s] density=%.3f%%, components=%d, largestComponent=%.2f%%%n",
                 name, density, numComponents, percNodesLargest);
+        // Iterate through cores and analyze each one
         for (int k = 0; k <= bz.maxShellIndex(); k++) {
             System.out.println("\n" + k + "-CORE:");
             UndirectedSparseGraph<Node, Edge> kCore = bz.getKcoreNetwork(k);
@@ -105,7 +108,13 @@ public abstract class Network {
         // Print results
         System.out.printf("  [%s] Number of nodes in %d-core: %d%n", name, k, V);
         System.out.printf("  [%s] Number of edges in %d-core: %d%n", name, k, E);
+        System.out.printf("  [%s] Average degree of %d-core %.4f%n", name, k, avgDegree(kCore));
         System.out.printf("  [%s] Density of %d-core: %.3f%%%n", name, k, coreDensity);
+        if(kCore.getVertexCount() < AVERAGE_PATH_THRESHOLD){
+            System.out.printf("  [%s] Average path length(small-world coefficient) in %d-core is: %.3f%n", name, k, averagePath(kCore));
+        }else{
+            System.out.println("Average path skipped (graph too large)");
+        }
         System.out.printf("  [%s] Number of connected components in %d-core: %d%n", name, k, coreNumComponents);
         System.out.printf("  [%s] Percentage of nodes in largest component %d-core: %.2f%%%n", name, k, corePercNodesLargest);
         System.out.printf("  [%s] Percentage of edges in largest component %d-core: %.2f%%%n", name, k, corePercEdgesLargest);
@@ -192,12 +201,8 @@ public abstract class Network {
     }
 
     public void runCentralityAnalysisBatchMode() {
-        System.out.printf("Graph has %d nodes and %d edges, compute all centralities? ",
-                graph.getVertexCount(),
-                graph.getEdgeCount());
-        boolean computeFullCentralities  = IN.nextLine().trim().equalsIgnoreCase("y");
         System.out.printf("[%s] Running batch analysis: computeFullCentralities=true, writeFiles=true, doPlots=false%n", name);
-        runCentralityAnalysis(computeFullCentralities, true, false);
+        runCentralityAnalysis(false, false, false);
     }
 
     public void plotShellIndexAndDegree(){
@@ -215,7 +220,7 @@ public abstract class Network {
         System.out.printf("Spearman correlation for %s and %s: %.3f.%n", "Shell index", yLabel, spearmanCoefficient);
 
         if(arrays[0].length < PLOT_THRESHOLD){
-            plotRegression(arrays[0], arrays[1], "Shell index", yLabel);
+            plotRegression(arrays[0], arrays[1], "Shell index", yLabel, name);
         } else {
             System.out.println("Skipping plot for " + yLabel + " (too many points: " + arrays[0].length + ")");
         }

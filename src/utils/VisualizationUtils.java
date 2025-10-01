@@ -34,7 +34,7 @@ public class VisualizationUtils {
         frame.pack();
         frame.setVisible(true);
     }
-    public static void plotRegression(double[] x, double[] y, String xLabel, String yLabel) {
+    public static void plotRegression(double[] x, double[] y, String xLabel, String yLabel, String name) {
         double pearson = new PearsonsCorrelation().correlation(x, y);
         double spearman = new SpearmansCorrelation().correlation(x, y);
 
@@ -48,7 +48,7 @@ public class VisualizationUtils {
         XYChart chart = new XYChartBuilder()
                 .width(600)
                 .height(500)
-                .title(xLabel + " vs " + yLabel)
+                .title(name+": "+xLabel + " vs " + yLabel)
                 .xAxisTitle(xLabel)
                 .yAxisTitle(yLabel)
                 .build();

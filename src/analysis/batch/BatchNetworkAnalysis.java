@@ -45,9 +45,12 @@ public class BatchNetworkAnalysis {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        // Example usage: small dummy networks
         List<Network> nets = List.of(
-                new CaliforniaRoads()
+                new FacebookAthletes(),
+                new FacebookArtists(),
+                new EmailEuCore(),
+                new ProteinPathways(),
+                new FacebookEgoSample()
         );
 
         runBatch(nets, Runtime.getRuntime().availableProcessors(), 0);

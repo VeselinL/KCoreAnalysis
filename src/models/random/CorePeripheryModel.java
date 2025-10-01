@@ -6,7 +6,7 @@ import graph.*;
 import java.util.*;
 
 public class CorePeripheryModel {
-    public static UndirectedSparseGraph<Node,Edge> discreteModel(int n, int nc, double cc, double pc){
+    public static UndirectedSparseGraph<Node,Edge> discreteModel(int n, int nc, double cc, double pc, double pp){
         if(n <= 0){
             System.out.println("Empty graph, skipping..");
             return new UndirectedSparseGraph<>();
@@ -43,6 +43,10 @@ public class CorePeripheryModel {
                 }else if(core.contains(src) || core.contains(dst)){
                     if(random.nextDouble() < pc){
                         graph.addEdge(new Edge(), src,dst);
+                    }
+                }else{
+                    if(random.nextDouble() < pp){
+                        graph.addEdge(new Edge(), src, dst);
                     }
                 }
             }

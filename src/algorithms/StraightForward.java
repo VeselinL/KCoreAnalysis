@@ -18,7 +18,7 @@ public class StraightForward{
 
         while (!remainingNodes.isEmpty()) {
             Set<Node> nodesToRemove = new HashSet<>();
-            // Collect all vertices with degree less than k
+            // collect all vertices with degree less than k
             for (Node node : remainingNodes) {
                 if (graphCopy.degree(node) < k) {
                     nodesToRemove.add(node);
@@ -26,11 +26,11 @@ public class StraightForward{
             }
             if (nodesToRemove.isEmpty()) {
                 k++;
-                // If k exceeds the maximum possible degree, break the loop
+                // if k exceeds the maximum possible degree, break the loop
                 if (k > graphCopy.getVertexCount()) {
                     break;
                 }
-                continue; // Restart the loop with the new, higher k
+                continue; // restart the loop with the new, higher k
             }
             for (Node node : nodesToRemove) {
                 shellIndices.put(node, k - 1);
@@ -39,7 +39,7 @@ public class StraightForward{
             remainingNodes.removeAll(nodesToRemove);
         }
 
-        // Handle remaining nodes
+        // handle remaining nodes
         for (Node node : remainingNodes) {
             shellIndices.put(node, k - 1);
         }
