@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.*;
 import analysis.abs.*;
 import analysis.network.file.*;
+import analysis.network.generated.*;
 
 /**
  * Runs a list of Network instances in parallel, created for analysis of large networks..
@@ -19,7 +20,7 @@ public class BatchNetworkAnalysis {
             executor.submit(() -> {
                 try {
                     System.out.println("[BATCH] Starting network: " + net.getName());
-                    net.runCentralityAnalysisBatchMode();
+                    net.runCentralityAnalysisBatchMode(false, true);
                     System.out.println("[BATCH] Finished network: " + net.getName());
                 } catch (Throwable t) {
                     System.err.println("[BATCH] Error processing " + net.getName() + ": " + t.getMessage());
@@ -48,9 +49,7 @@ public class BatchNetworkAnalysis {
         List<Network> nets = List.of(
                 new FacebookAthletes(),
                 new FacebookArtists(),
-                new EmailEuCore(),
-                new ProteinPathways(),
-                new FacebookEgoSample()
+                new ProteinPathways()
         );
 
         runBatch(nets, Runtime.getRuntime().availableProcessors(), 0);

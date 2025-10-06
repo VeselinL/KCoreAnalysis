@@ -15,8 +15,15 @@ import java.util.stream.Collectors;
 
 public class GraphUtils {
     public static double avgDegree(UndirectedSparseGraph<Node,Edge> graph){
-        if(graph.getVertexCount() == 0)return 0;
+        if(graph.getVertexCount() == 0) return 0;
         return 2.0 * graph.getEdgeCount() / graph.getVertexCount();
+    }
+    public static int maxDegree(UndirectedSparseGraph<Node,Edge> graph){
+        int maxDegree = -1;
+        for(Node node: graph.getVertices()){
+            maxDegree = Math.max(maxDegree, graph.degree(node));
+        }
+        return maxDegree;
     }
     public static UndirectedSparseGraph<Node, Edge> deepCopy(UndirectedSparseGraph<Node,Edge> originalGraph){
         UndirectedSparseGraph<Node,Edge> graphCopy= new UndirectedSparseGraph<>();

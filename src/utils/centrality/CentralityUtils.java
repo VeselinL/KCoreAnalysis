@@ -1,5 +1,6 @@
 package utils.centrality;
 
+import analysis.network.file.ZacharyKarateClub;
 import edu.uci.ics.jung.algorithms.scoring.BetweennessCentrality;
 import edu.uci.ics.jung.algorithms.scoring.ClosenessCentrality;
 import edu.uci.ics.jung.algorithms.scoring.EigenvectorCentrality;

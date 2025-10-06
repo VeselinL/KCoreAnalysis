@@ -4,6 +4,7 @@ import algorithms.abs.KCoreDecomposition;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import graph.*;
 import java.util.*;
+import static utils.GraphUtils.*;
 
 public class BatageljZaversnik extends KCoreDecomposition {
     private HashMap<Integer, LinkedHashSet<Node>> kcoreBuckets;
@@ -23,7 +24,7 @@ public class BatageljZaversnik extends KCoreDecomposition {
     }
     @Override
     protected void computeKCores(){
-        int maxDegree = getMaxDegree();
+        int maxDegree = maxDegree(graph);
         HashMap<Node, Integer> nodeDegrees = initializeBuckets(maxDegree);
         for (int k = 0; k <= maxDegree; k++) {
             LinkedHashSet<Node> currentBucket = kcoreBuckets.get(k);
@@ -42,13 +43,6 @@ public class BatageljZaversnik extends KCoreDecomposition {
                 }
             }
         }
-    }
-    private int getMaxDegree(){
-        int maxDegree = 0;
-        for(Node node: graph.getVertices()){
-            maxDegree = Math.max(maxDegree, graph.degree(node));
-        }
-        return maxDegree;
     }
     private HashMap<Node, Integer> initializeBuckets(int maxDegree){
         kcoreBuckets = new HashMap<>();

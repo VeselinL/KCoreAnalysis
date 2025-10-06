@@ -20,7 +20,7 @@ public class GraphFileWriter {
             if(fullCentralities){
                 bw.write("node,degree,shell_index,closeness,betweenness,eigenvector");
             }else{
-                bw.write("node,degree,shell_index,harmonic_closeness,approx_betweenness,approx_eigenvector");
+                bw.write("node,degree,shell_index,approx_closeness,approx_betweenness,approx_eigenvector");
             }
             bw.newLine();
             StringBuilder sb = new StringBuilder();

@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ApproximationUtils {
-    public static HashMap<Node, Double> computeHarmonicCloseness(
+    public static HashMap<Node, Double> approximateClosenessCentrality(
             UndirectedSparseGraph<Node, Edge> graph, int sampleSize) {
 
         HashMap<Node, Double> closenessScores = new HashMap<>();

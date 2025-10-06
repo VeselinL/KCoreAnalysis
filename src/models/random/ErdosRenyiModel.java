@@ -5,7 +5,6 @@ import graph.Edge;
 import graph.Node;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 import static utils.GraphUtils.avgDegree;
@@ -47,13 +46,5 @@ public class ErdosRenyiModel {
     }
     public UndirectedSparseGraph<Node,Edge> getGraph(){
         return this.graph;
-    }
-    public void compareAvgDegree(){
-        double expected = p * (n-1);
-        double actual = avgDegree(graph);
-        if(n == 0){
-            expected = 0;
-        }
-        System.out.printf("Expected average degree is %.3f, actual one is %.3f.%n", expected, actual);
     }
 }

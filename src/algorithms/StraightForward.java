@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import graph.*;
 
+import static utils.GraphUtils.maxDegree;
+
 public class StraightForward{
     public static  HashMap<Node, Integer> straightForwardAlgorithm(UndirectedSparseGraph<Node, Edge> originalGraph) {
         UndirectedSparseGraph<Node,Edge> graphCopy = GraphUtils.deepCopy(originalGraph);
@@ -27,7 +29,7 @@ public class StraightForward{
             if (nodesToRemove.isEmpty()) {
                 k++;
                 // if k exceeds the maximum possible degree, break the loop
-                if (k > graphCopy.getVertexCount()) {
+                if (k > maxDegree(graphCopy)) {
                     break;
                 }
                 continue; // restart the loop with the new, higher k

@@ -1,11 +1,9 @@
 package analysis.abs;
 
-import edu.uci.ics.jung.algorithms.cluster.WeakComponentClusterer;
+import component.BFSComponents;
+import edu.uci.ics.jung.algorithms.metrics.Metrics;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import graph.*;
 import algorithms.BatageljZaversnik;
 import utils.CorrelationUtils;
@@ -25,10 +23,9 @@ public abstract class Network {
     private static final String FILE_SUFFIX = "_metrics.csv";
     private static final String RESULTS_DIR = "src/results/";
     private static final int CENTRALITY_THRESHOLD = 10_000;
-    private static final int PLOT_THRESHOLD = 100_000;
-    private static final int SAMPLE_SIZE = 100;
-    private static final int AVERAGE_PATH_THRESHOLD = 500;
-    private static final int DIAMETER_THRESHOLD = 1000;
+    private static final int PLOT_THRESHOLD = 10_000;
+    private static final int AVERAGE_PATH_THRESHOLD = 10_000;
+    private static final int DIAMETER_THRESHOLD = 10_000;
     private static final Scanner IN = new Scanner(System.in);
 
     public Network(UndirectedSparseGraph<Node,Edge> graph, String networkName){
@@ -47,20 +44,10 @@ public abstract class Network {
     }
 
     public void kCoreAnalysis() {
-        double density = (graphDensity(graph)) * 100.0;
-        WeakComponentClusterer<Node, Edge> clusterer = new WeakComponentClusterer<>();
-        Set<Set<Node>> comps = clusterer.transform(graph);
-        // number of connected comps in graph
-        int numComponents = comps.size();
-        int largestSize = comps.stream().mapToInt(Set::size).max().orElse(0);
-        int N = graph.getVertexCount();
-        double percNodesLargest = (N > 0) ? (largestSize * 100.0 / N) : 0.0;
-
-        System.out.printf("[%s] density=%.3f%%, components=%d, largestComponent=%.2f%%%n",
-                name, density, numComponents, percNodesLargest);
         // Iterate through cores and analyze each one
         for (int k = 0; k <= bz.maxShellIndex(); k++) {
-            System.out.println("\n" + k + "-CORE:");
+            if(k == 0) System.out.println("\nFULL NETWORK: ");
+            else System.out.println("\n" + k + "-CORE:");
             UndirectedSparseGraph<Node, Edge> kCore = bz.getKcoreNetwork(k);
             if (kCore != null && kCore.getVertexCount() > 0) {
                 analyzeEachCore(kCore, k);
@@ -76,12 +63,11 @@ public abstract class Network {
         double coreDensity = (graphDensity(kCore)) * 100.0;
 
         // Compute connected components
-        WeakComponentClusterer<Node, Edge> coreClusterer = new WeakComponentClusterer<>();
-        Set<Set<Node>> coreComps = coreClusterer.transform(kCore);
-        int coreNumComponents = coreComps.size();
+        Set<Set<Node>> coreConnectedComps = BFSComponents.findConnectedComps(kCore);
+        int coreNumComponents = coreConnectedComps.size();
 
         // Find largest component
-        Set<Node> largestCompNodes = coreComps.stream()
+        Set<Node> largestCompNodes = coreConnectedComps.stream()
                 .max(Comparator.comparingInt(Set::size))
                 .orElse(Set.of());
         int coreLargestSize = largestCompNodes.size();
@@ -104,18 +90,24 @@ public abstract class Network {
             }
         }
         double corePercEdgesLargest = (E > 0) ? (largestCoreComp.getEdgeCount() * 100.0 / E) : 0.0;
-
+        Map<Node, Double> clusteringCoeffs = Metrics.clusteringCoefficients(kCore);
+        double sum = 0.0;
+        for (double coeff : clusteringCoeffs.values()) {
+            sum += coeff;
+        }
+        double avgClustering = sum / clusteringCoeffs.size();
         // Print results
         System.out.printf("  [%s] Number of nodes in %d-core: %d%n", name, k, V);
         System.out.printf("  [%s] Number of edges in %d-core: %d%n", name, k, E);
         System.out.printf("  [%s] Average degree of %d-core %.4f%n", name, k, avgDegree(kCore));
         System.out.printf("  [%s] Density of %d-core: %.3f%%%n", name, k, coreDensity);
         if(kCore.getVertexCount() < AVERAGE_PATH_THRESHOLD){
-            System.out.printf("  [%s] Average path length(small-world coefficient) in %d-core is: %.3f%n", name, k, averagePath(kCore));
+            System.out.printf("  [%s] Average path length in %d-core is: %.3f%n", name, k, averagePath(kCore));
         }else{
             System.out.println("Average path skipped (graph too large)");
         }
         System.out.printf("  [%s] Number of connected components in %d-core: %d%n", name, k, coreNumComponents);
+        System.out.printf("  [%s] Average clustering coefficient of %d-core: %.4f%%%n", name, k, avgClustering*100.0);
         System.out.printf("  [%s] Percentage of nodes in largest component %d-core: %.2f%%%n", name, k, corePercNodesLargest);
         System.out.printf("  [%s] Percentage of edges in largest component %d-core: %.2f%%%n", name, k, corePercEdgesLargest);
         if (largestCoreComp.getVertexCount() < DIAMETER_THRESHOLD) {
@@ -151,7 +143,7 @@ public abstract class Network {
         } else if (graph.getVertexCount() >= PLOT_THRESHOLD) {
             System.out.printf("Skipping detailed plots (too many nodes: %,d).%n", graph.getVertexCount());
         }
-
+        System.out.println();
         runCentralityAnalysis(computeFullCentralities, writeFiles, doPlots);
         IN.close();
     }
@@ -174,13 +166,13 @@ public abstract class Network {
             System.out.printf("[%s] Computing eigenvector centrality...%n", name);
             ec = computeEigenvectorCentrality(graph);
         } else {
-            int sampleSize = Math.min(SAMPLE_SIZE, graph.getVertexCount());
-            int iterations = 20;
+            int sampleSize = (int) Math.sqrt(graph.getVertexCount());
+            int iterations = 100;
             System.out.printf("[%s] Approximating centrality scores...%n", name);
-            System.out.printf("[%s] Computing harmonic closeness centrality (sampleSize=%d)...%n", name, sampleSize);
-            cc = utils.centrality.ApproximationUtils.computeHarmonicCloseness(graph, sampleSize);
+            System.out.printf("[%s] Approximating closeness centrality (sampleSize = sqrt(V) = %d)...%n", name, sampleSize);
+            cc = utils.centrality.ApproximationUtils.approximateClosenessCentrality(graph, sampleSize);
 
-            System.out.printf("[%s] Approximating betweenness centrality (sampleSize=%d)...%n", name, sampleSize);
+            System.out.printf("[%s] Approximating betweenness centrality (sampleSize = sqrt(V) = %d)...%n", name, sampleSize);
             bc = utils.centrality.ApproximationUtils.approximateBetweennessCentrality(graph, sampleSize);
 
             System.out.printf("[%s] Approximating eigenvector centrality (iterations=%d)...%n", name, iterations);
@@ -200,9 +192,9 @@ public abstract class Network {
         }
     }
 
-    public void runCentralityAnalysisBatchMode() {
+    public void runCentralityAnalysisBatchMode(boolean fullCentrality, boolean writeFiles) {
         System.out.printf("[%s] Running batch analysis: computeFullCentralities=true, writeFiles=true, doPlots=false%n", name);
-        runCentralityAnalysis(false, false, false);
+        runCentralityAnalysis(fullCentrality,writeFiles, false);
     }
 
     public void plotShellIndexAndDegree(){
