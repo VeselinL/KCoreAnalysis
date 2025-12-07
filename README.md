@@ -1,8 +1,8 @@
 # k-core Decomposition in Social Networks
 
-Implementation of the **Batagelj–Zaveršnik algorithm** for k-algorithms decomposition and shell index computation in 
+Implementation of the **Batagelj–Zaveršnik algorithm** for k-core decomposition and shell index computation in 
 undirected networks, as part of the *Social Networks* course project. This project focuses on algorithm implementation, 
-testing on synthetic and real networks, and empirical analysis of k-algorithms structures. The project is done in Java
+testing on synthetic and real networks, and empirical analysis of the k-core structures of graphs. The project is done in Java
 using the JUNG library.
 
 ---
